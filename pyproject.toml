@@ -12,8 +12,8 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.11"
-uvloop = {version = "^0.17.0", markers = "sys_platform != 'win32'"}
-winloop = {version = "^0.1.0", markers = "sys_platform == 'win32'"}
+uvloop = {version = "*", markers = "sys_platform != 'win32'"}
+winloop = {version = "*", markers = "sys_platform == 'win32'"}
 
 [tool.poetry.group.dev.dependencies]
 build = "^1.2.1"
