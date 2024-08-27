@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [tool.poetry]
 name = "winuvloop"
-version = "0.1.4"
+version = "0.2.0"
 description = "winuvloop is a Python package that automatically installs and configures the optimal event loop for your platform, setting up uvloop on Linux/POSIX systems and winloop on Windows, ensuring seamless cross-platform development."
 authors = ["Aviad Rozenhek <aviadr1@gmail.com>"]
 license = "MIT"
