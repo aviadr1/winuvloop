@@ -1,6 +1,12 @@
 name: Publish to PyPI
 
 on:
+  pull_request:
+    branches:
+      - main
+    types:
+      - opened
+      - synchronize
   push:
     tags:
       - 'v*.*.*'
@@ -27,7 +33,20 @@ jobs:
         version: latest
 
     - name: Install project dependencies
-      run: poetry install --no-dev
+      run: poetry install
+
+    - name: Determine version bump
+      id: version-bump
+      run: |
+        poetry update --dry-run > update_report.txt
+        cat update_report.txt
+        if grep -q "major update" update_report.txt; then
+          echo "::set-output name=bump_type::major"
+        elif grep -q "minor update" update_report.txt; then
+          echo "::set-output name=bump_type::minor"
+        else
+          echo "::set-output name=bump_type::patch"
+        fi
 
     - name: Bump version
       uses: FragileTech/bump-version@main
@@ -37,6 +56,7 @@ jobs:
         commit_name: "Aviad Rozenhek"
         commit_email: "aviadr1@gmail.com"
         login: "aviadr1"
+        version_part: ${{ steps.version-bump.outputs.bump_type }}
         tag_name: "v{new_version}"
         commit_message: "Bump version to {new_version}"
 
