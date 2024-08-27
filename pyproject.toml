@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.poetry]
+name = "winuvloop"
+version = "0.1.0"
+description = "A cross-platform event loop installer for uvloop (POSIX) and winloop (Windows)"
+authors = ["Aviad Rozenhek <aviadr1@gmail.com>"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+
+[tool.poetry.group.dev.dependencies]
+build = "^1.2.1"
+twine = "^5.1.1"
