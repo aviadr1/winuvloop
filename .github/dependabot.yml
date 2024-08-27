@@ -1,0 +1,19 @@
+version: 2
+updates:
+  # Poetry Dependencies
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 5
+    # Allows updating Poetry-managed dependencies listed in pyproject.toml
+    ignore:
+      - dependency-name: "uvloop"
+      - dependency-name: "winloop"
+
+  # GitHub Actions Dependencies
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
