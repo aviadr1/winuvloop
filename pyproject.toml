@@ -18,3 +18,4 @@ winloop = {version = "^0.1.0", markers = "sys_platform == 'win32'"}
 [tool.poetry.group.dev.dependencies]
 build = "^1.2.1"
 twine = "^5.1.1"
+bump2version = "^1.0.1"
