@@ -4,13 +4,16 @@ build-backend = "setuptools.build_meta"
 
 [tool.poetry]
 name = "winuvloop"
-version = "0.1.0"
-description = "A cross-platform event loop installer for uvloop (POSIX) and winloop (Windows)"
+version = "0.1.4"
+description = "winuvloop is a Python package that automatically installs and configures the optimal event loop for your platform, setting up uvloop on Linux/POSIX systems and winloop on Windows, ensuring seamless cross-platform development."
 authors = ["Aviad Rozenhek <aviadr1@gmail.com>"]
 license = "MIT"
+readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.11"
+uvloop = {version = "^0.17.0", markers = "sys_platform != 'win32'"}
+winloop = {version = "^0.1.0", markers = "sys_platform == 'win32'"}
 
 [tool.poetry.group.dev.dependencies]
 build = "^1.2.1"

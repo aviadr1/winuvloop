@@ -1,9 +1,8 @@
-Here's a simple and effective `README.md` for your `winuvloop` package:
-
-```markdown
 # winuvloop
 
-`winuvloop` is a Python package that simplifies the installation of the appropriate event loop for your platform. It automatically installs `uvloop` on Linux/POSIX systems and `winloop` on Windows, allowing for seamless cross-platform development.
+`winuvloop` is a Python package that ensures you always use the best event loop for your platform. 
+It automatically sets up `uvloop` on Linux/POSIX systems and `winloop` on Windows, optimizing performance and compatibility without extra configuration. 
+By using `winuvloop`, you can streamline your development process and focus on writing your application code, knowing that the right event loop is always in place for seamless cross-platform functionality.
 
 ## Features
 
@@ -21,9 +20,8 @@ pip install winuvloop
 
 Or by adding it to your `pyproject.toml` in a Poetry-managed project:
 
-```toml
-[tool.poetry.dependencies]
-winuvloop = "^0.1.0"
+```bash
+poetry add winuvloop
 ```
 
 ## Usage
