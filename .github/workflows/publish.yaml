@@ -3,8 +3,8 @@ name: Publish to PyPI
 on:
   push:
     tags:
-      - 'v*.*.*'  # Matches version tags like v1.0.0, v1.1.0, etc.
-  workflow_dispatch:  # Allows manual triggering from GitHub UI
+      - 'v*.*.*'
+  workflow_dispatch:
 
 jobs:
   publish:
@@ -13,6 +13,8 @@ jobs:
     steps:
     - name: Check out repository
       uses: actions/checkout@v4
+      with:
+        persist-credentials: false
 
     - name: Set up Python
       uses: actions/setup-python@v5
@@ -23,11 +25,20 @@ jobs:
       uses: snok/install-poetry@v1
       with:
         version: latest
-        virtualenvs-create: true
-        virtualenvs-in-project: false
 
     - name: Install project dependencies
       run: poetry install --no-dev
+
+    - name: Bump version
+      uses: FragileTech/bump-version@main
+      with:
+        token: ${{ secrets.BOT_TOKEN }}
+        files: "pyproject.toml"
+        commit_name: "Aviad Rozenhek"
+        commit_email: "aviadr1@gmail.com"
+        login: "aviadr1"
+        tag_name: "v{new_version}"
+        commit_message: "Bump version to {new_version}"
 
     - name: Publish to PyPI
       env:
