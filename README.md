@@ -1,7 +1,7 @@
 # winuvloop
 
 `winuvloop` is a Python package that ensures you always use the best event loop for your platform. 
-It automatically sets up `uvloop` on Linux/POSIX systems and `winloop` on Windows, optimizing performance and compatibility without extra configuration. 
+It automatically sets up [uvloop](https://github.com/MagicStack/uvloop) on Linux/POSIX systems and [winloop](https://github.com/Vizonex/winloop) on Windows, optimizing performance and compatibility without extra configuration. 
 By using `winuvloop`, you can streamline your development process and focus on writing your application code, knowing that the right event loop is always in place for seamless cross-platform functionality.
 
 ## Features
