@@ -45,7 +45,7 @@ winuvloop.install()
 
 ## Requirements
 
-- Python 3.11 or higher
+- Python 3.8 or higher
 - `uvloop` for POSIX systems
 - `winloop` for Windows systems
 
