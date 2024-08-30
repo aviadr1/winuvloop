@@ -32,7 +32,7 @@ else:
 
     def new_event_loop() -> Loop:
         """Return a new event loop."""
-        return Loop()
+        ...
 
     def install() -> None:
         """A helper function to install uvloop/winloop policy."""
@@ -57,8 +57,7 @@ else:
 
         """
 
-        def _loop_factory(self) -> Loop:
-            return new_event_loop()
+        def _loop_factory(self) -> Loop:...
 
         if _typing.TYPE_CHECKING:
             # EventLoopPolicy doesn't implement these, but since they are marked
