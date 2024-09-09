@@ -11,7 +11,7 @@ license = "MIT"
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.11"
+python = "^3.8"
 uvloop = {version = "*", markers = "sys_platform != 'win32'"}
 winloop = {version = "*", markers = "sys_platform == 'win32'"}
 
