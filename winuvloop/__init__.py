@@ -1,12 +1,12 @@
-import asyncio as __asyncio
+import asyncio
 import sys
-import typing as _typing
-from asyncio.events import BaseDefaultEventLoopPolicy as __BasePolicy
+import typing
+from asyncio.events import BaseDefaultEventLoopPolicy 
 
-_T = _typing.TypeVar("_T")
+_T = typing.TypeVar("_T")
 
 
-if not _typing.TYPE_CHECKING:
+if not typing.TYPE_CHECKING:
 
     if sys.platform in ("win32", "cygwin", "cli"):
         import winloop
@@ -27,7 +27,7 @@ if not _typing.TYPE_CHECKING:
 
 else:
 
-    class Loop(__asyncio.BaseEventLoop):  # type: ignore
+    class Loop(asyncio.BaseEventLoop):  # type: ignore
         pass
 
     def new_event_loop() -> Loop:
@@ -45,7 +45,7 @@ else:
     ) -> _T:
         """The preferred way of running a coroutine with winuvloop."""
 
-    class EventLoopPolicy(__BasePolicy):
+    class EventLoopPolicy(BaseDefaultEventLoopPolicy):
         """Event loop policy.
 
         The preferred way to make your application use winuvloop:
@@ -64,9 +64,9 @@ else:
             # as abstract in typeshed, we have to put them in so mypy thinks
             # the base methods are overridden. This is the same approach taken
             # for the Windows event loop policy classes in typeshed.
-            def get_child_watcher(self) -> _typing.NoReturn: ...
+            def get_child_watcher(self) -> typing.NoReturn: ...
 
-            def set_child_watcher(self, watcher: _typing.Any) -> _typing.NoReturn: ...
+            def set_child_watcher(self, watcher: _typing.Any) -> typing.NoReturn: ...
 
 
 __all__ = ["run", "install", "EventLoopPolicy", "Loop", "new_event_loop"]
