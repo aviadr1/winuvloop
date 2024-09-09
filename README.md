@@ -31,8 +31,11 @@ Simply import the package, and use it as you would uv/win loop:
 ```python
 import winuvloop
 
+async def my_coroutine():
+   ...  # your function here
+
 # the preferred way to use win/uv loop is with the run method
-uvwinloop.run(my_coroutine)
+winuvloop.run(my_coroutine())
 ```
 
 alternatively, you can install the loop globally:
