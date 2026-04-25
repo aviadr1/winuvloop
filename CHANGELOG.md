@@ -13,6 +13,8 @@ All notable changes to `winuvloop` are documented here.
 - Add formatting and bytecode compilation checks to CI.
 - Add upstream issue routing links and stronger pull request guidance.
 - Include tests and maintenance docs in the source distribution.
+- Keep Python 3.9 development installs on the compatible Twine line so
+  Dependabot security updates can resolve.
 
 ## 0.2.1 - 2026-04-25
 
