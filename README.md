@@ -6,12 +6,14 @@
 [![CI](https://github.com/aviadr1/winuvloop/actions/workflows/ci.yml/badge.svg)](https://github.com/aviadr1/winuvloop/actions/workflows/ci.yml)
 [![License](https://img.shields.io/pypi/l/winuvloop.svg)](https://github.com/aviadr1/winuvloop/blob/main/LICENSE)
 
-`winuvloop` is a tiny cross-platform asyncio event loop selector:
+`winuvloop` is a tiny cross-platform asyncio event loop selector for projects
+that want one import to do the right thing on developer laptops, CI, and
+production runners:
 
 | Platform | Backend used by `winuvloop` |
 | --- | --- |
 | Windows | [`winloop`](https://github.com/Vizonex/Winloop) |
-| Linux, macOS, POSIX | [`uvloop`](https://github.com/MagicStack/uvloop) |
+| Linux, macOS, other POSIX | [`uvloop`](https://github.com/MagicStack/uvloop) |
 
 It is useful when the same Python application, example, benchmark, CLI, or
 service should use a high-performance asyncio loop on both Windows and
@@ -27,8 +29,9 @@ servers, proxies, websocket services, crawlers, and async database clients.
 [`winloop`](https://github.com/Vizonex/Winloop) provides a uvloop-compatible
 API for Windows, where `uvloop` itself is not the Windows backend.
 
-`winuvloop` does not replace either upstream project. It gives you one import
-that chooses the right upstream backend:
+`winuvloop` does not replace either upstream project, vendor their code, or
+hide backend bugs. It gives you one import that chooses the right upstream
+backend:
 
 ```python
 import winuvloop
@@ -41,6 +44,10 @@ async def main() -> None:
 winuvloop.run(main())
 ```
 
+The wrapper stays deliberately small: platform detection, clear diagnostics,
+common API re-exports, typing stubs, and platform-specific dependency markers.
+Runtime behavior comes from the selected upstream backend.
+
 ## When To Use It
 
 Use `winuvloop` when:
@@ -51,6 +58,8 @@ Use `winuvloop` when:
 - you want one dependency that resolves `uvloop` or `winloop` through platform
   markers
 - you want to log or inspect which optimized backend was selected
+- you maintain library examples that should work for both Unix and Windows
+  users
 
 Use the upstream packages directly when:
 
@@ -58,6 +67,13 @@ Use the upstream packages directly when:
 - your project only targets Windows: use `winloop`
 - you need backend-specific APIs and do not want a selector layer
 - you are debugging an upstream event-loop issue and need to remove wrappers
+
+| Situation | Recommended dependency |
+| --- | --- |
+| Linux/macOS-only service | `uvloop` |
+| Windows-only service | `winloop` |
+| Cross-platform CLI, app, benchmark, or documentation | `winuvloop` |
+| Backend-specific feature work or bug isolation | upstream backend directly |
 
 ## Installation
 
@@ -109,6 +125,7 @@ import winuvloop
 
 
 print(winuvloop.backend_name())  # "uvloop" or "winloop"
+print(winuvloop.backend_version())
 print(winuvloop.__backend__)
 print(winuvloop.backend().__name__)
 ```
@@ -120,8 +137,24 @@ The module re-exports the common backend API:
 - `new_event_loop`
 - `Loop`
 - `EventLoopPolicy`
+- `backend`
+- `backend_name`
+- `backend_version`
 
 Backend-specific attributes are delegated to the selected upstream module.
+
+For issue reports, include this diagnostic snippet:
+
+```bash
+python - <<'PY'
+import platform
+import winuvloop
+
+print("python:", platform.python_version(), platform.python_implementation())
+print("platform:", platform.platform())
+print("backend:", winuvloop.backend_name(), winuvloop.backend_version())
+PY
+```
 
 ## Typing
 
@@ -132,8 +165,9 @@ on Windows.
 
 ## Compatibility
 
-`winuvloop` targets CPython 3.8.1 and newer, matching the current published
-support range of `uvloop` and `winloop`.
+`winuvloop` targets CPython 3.8.1 and newer. The optimized backend packages are
+native CPython packages, so PyPy and other Python implementations are not a
+supported target for this selector.
 
 | Environment | Status |
 | --- | --- |
@@ -147,12 +181,28 @@ support range of `uvloop` and `winloop`.
 If an upstream backend does not publish a wheel for a specific interpreter or
 platform, installation may require local build tooling for that backend.
 
+## Upstream Support Boundary
+
+Report selector problems here when platform selection, dependency markers,
+typing stubs, documentation, or packaging are wrong.
+
+Report backend behavior problems upstream when the issue also reproduces after
+importing the selected backend directly:
+
+- `uvloop`: <https://github.com/MagicStack/uvloop/issues>
+- `winloop`: <https://github.com/Vizonex/Winloop/issues>
+
+This keeps backend fixes close to the projects that own event-loop internals
+while keeping `winuvloop` focused on cross-platform ergonomics.
+
 ## Testing Strategy
 
 CI runs on Linux, macOS, and Windows. It includes:
 
 - lockfile validation with `uv lock --check`
 - linting with `ruff`
+- formatting checks with `ruff format --check`
+- bytecode compilation checks for `src` and `tests`
 - wrapper unit tests that mock both backends
 - real backend smoke tests that call `winuvloop.run()` on the platform backend
 - source distribution and wheel builds
@@ -169,6 +219,7 @@ locking, and builds.
 ```bash
 uv sync
 uv run ruff check .
+uv run ruff format --check .
 uv run pytest
 uv build
 uv run twine check dist/*
@@ -183,10 +234,10 @@ Releases are automatic:
 
 1. Change `project.version` in `pyproject.toml`.
 2. Merge to `main`.
-3. GitHub Actions creates the missing `vX.Y.Z` tag.
+3. After CI passes on `main`, GitHub Actions creates the missing `vX.Y.Z` tag.
 4. GitHub Actions dispatches `release.yml` for that tag.
-5. The release workflow builds, validates, publishes to PyPI, and creates a
-   GitHub Release.
+5. The release workflow smoke-tests Linux, macOS, and Windows, then builds,
+   validates, publishes to PyPI, and creates a GitHub Release.
 
 PyPI trusted publishing must be configured for the `release.yml` workflow and
 the `pypi` environment for credential-free publishing. If the repository still

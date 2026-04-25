@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import sys
 from importlib import import_module, metadata
+from platform import python_implementation
 from types import ModuleType
 from typing import Any
 
@@ -18,6 +19,15 @@ def backend() -> ModuleType:
     return _BACKEND
 
 
+def backend_version() -> str | None:
+    """Return the installed version of the selected backend, if known."""
+    try:
+        return metadata.version(_BACKEND_NAME)
+    except metadata.PackageNotFoundError:
+        version = getattr(_BACKEND, "__version__", None)
+        return version if isinstance(version, str) else None
+
+
 _BACKEND_NAME = backend_name()
 
 try:
@@ -27,8 +37,10 @@ except ModuleNotFoundError as exc:
         raise
     raise ModuleNotFoundError(
         f"winuvloop selected {_BACKEND_NAME!r} for platform {sys.platform!r}, "
-        f"but that package is not installed. Install winuvloop with its "
-        f"platform dependencies, or install {_BACKEND_NAME!r} directly."
+        f"but that package is not installed for {python_implementation()}. "
+        f"winuvloop's optimized backends target CPython. Install winuvloop "
+        f"with its platform dependencies, or install {_BACKEND_NAME!r} "
+        f"directly."
     ) from exc
 
 __backend__ = _BACKEND.__name__
@@ -51,6 +63,7 @@ __all__ = (
     "__version__",
     "backend",
     "backend_name",
+    "backend_version",
     "install",
     "new_event_loop",
     "run",

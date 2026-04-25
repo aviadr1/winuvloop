@@ -1,8 +1,10 @@
 name: Auto Release
 
 on:
-  push:
+  workflow_run:
+    workflows: ["CI"]
     branches: [main]
+    types: [completed]
   workflow_dispatch:
 
 permissions:
@@ -16,12 +18,14 @@ concurrency:
 jobs:
   tag:
     name: Tag new project version
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository
         uses: actions/checkout@v6
         with:
           fetch-depth: 0
+          ref: ${{ github.event.workflow_run.head_sha || github.ref }}
 
       - name: Read project version
         id: version

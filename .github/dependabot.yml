@@ -7,6 +7,7 @@ updates:
       day: "monday"
       time: "08:00"
       timezone: "Asia/Jerusalem"
+    rebase-strategy: "auto"
     open-pull-requests-limit: 10
     groups:
       upstream-event-loops:
@@ -40,6 +41,7 @@ updates:
       day: "monday"
       time: "08:30"
       timezone: "Asia/Jerusalem"
+    rebase-strategy: "auto"
     open-pull-requests-limit: 5
     groups:
       github-actions:

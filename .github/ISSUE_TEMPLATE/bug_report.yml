@@ -30,8 +30,8 @@ body:
   - type: input
     id: python
     attributes:
-      label: Python version
-      placeholder: "3.12.11"
+      label: Python version and implementation
+      placeholder: "CPython 3.12.11"
     validations:
       required: true
   - type: input
@@ -41,6 +41,14 @@ body:
       placeholder: "Windows 11, Ubuntu 24.04, macOS 15"
     validations:
       required: true
+  - type: textarea
+    id: diagnostics
+    attributes:
+      label: Diagnostics
+      description: Paste the output of the diagnostic snippet from the README, if import succeeds.
+      render: text
+    validations:
+      required: false
   - type: textarea
     id: reproduction
     attributes:
