@@ -123,6 +123,13 @@ The module re-exports the common backend API:
 
 Backend-specific attributes are delegated to the selected upstream module.
 
+## Typing
+
+`winuvloop` ships a `py.typed` marker and public API stubs for the selector
+module. The runtime values remain direct aliases to the selected upstream
+backend, so `winuvloop.Loop` is still `uvloop.Loop` on POSIX and `winloop.Loop`
+on Windows.
+
 ## Compatibility
 
 `winuvloop` targets CPython 3.8.1 and newer, matching the current published

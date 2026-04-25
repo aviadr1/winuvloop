@@ -4,7 +4,7 @@ build-backend = "uv_build"
 
 [project]
 name = "winuvloop"
-version = "0.2.1"
+version = "0.2.2"
 description = "Cross-platform asyncio event loop selection: uvloop on POSIX and winloop on Windows."
 readme = "README.md"
 requires-python = ">=3.8.1"

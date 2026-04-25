@@ -2,7 +2,11 @@
 
 All notable changes to `winuvloop` are documented here.
 
-## 0.2.1 - Unreleased
+## 0.2.2 - Unreleased
+
+- Add public API stubs for better editor and type-checker ergonomics.
+
+## 0.2.1 - 2026-04-25
 
 - Move packaging to standard PEP 621 metadata and the `uv_build` backend.
 - Replace `poetry.lock` with `uv.lock` for faster, reproducible development.
