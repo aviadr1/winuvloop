@@ -65,7 +65,14 @@ jobs:
         uses: astral-sh/setup-uv@v8.1.0
 
       - name: Publish distributions
-        run: uv publish --trusted-publishing always dist/*
+        env:
+          PYPI_API_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
+        run: |
+          if [ -n "${PYPI_API_TOKEN}" ]; then
+            uv publish --token "${PYPI_API_TOKEN}" dist/*
+          else
+            uv publish --trusted-publishing always dist/*
+          fi
 
       - name: Create GitHub release
         env:

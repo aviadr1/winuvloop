@@ -178,12 +178,13 @@ Releases are automatic:
 2. Merge to `main`.
 3. GitHub Actions creates the missing `vX.Y.Z` tag.
 4. GitHub Actions dispatches `release.yml` for that tag.
-5. The release workflow builds, validates, publishes to PyPI with trusted
-   publishing, and creates a GitHub Release.
+5. The release workflow builds, validates, publishes to PyPI, and creates a
+   GitHub Release.
 
 PyPI trusted publishing must be configured for the `release.yml` workflow and
-the `pypi` environment before the publish step can succeed. Manual tag pushes
-with the `vX.Y.Z` format still run the same release workflow.
+the `pypi` environment for credential-free publishing. If the repository still
+uses a `PYPI_API_TOKEN` secret, the release workflow can use that as a fallback.
+Manual tag pushes with the `vX.Y.Z` format still run the same release workflow.
 
 ## License
 
