@@ -32,7 +32,8 @@ uv run twine check dist/*
 Releases are automatic after a version change lands on `main`. If
 `pyproject.toml` contains a version without a matching `vX.Y.Z` tag, GitHub
 Actions creates the tag and dispatches `release.yml`. The release workflow
-builds, validates, publishes to PyPI, and creates a GitHub Release.
+builds, validates, publishes to PyPI through trusted publishing or the
+`PYPI_API_TOKEN` fallback secret, and creates a GitHub Release.
 
 ## Dependency Policy
 
