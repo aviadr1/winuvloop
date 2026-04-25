@@ -5,7 +5,7 @@ build-backend = "uv_build"
 [project]
 name = "winuvloop"
 version = "0.2.2"
-description = "Cross-platform asyncio event loop selection: uvloop on POSIX and winloop on Windows."
+description = "Use uvloop on Linux/macOS and winloop on Windows through one small asyncio compatibility import."
 readme = "README.md"
 requires-python = ">=3.8.1"
 license = "MIT"
@@ -16,10 +16,15 @@ authors = [
 keywords = [
   "asyncio",
   "event-loop",
+  "event-loop-policy",
   "uvloop",
   "winloop",
+  "asyncio-run",
   "windows",
+  "linux",
+  "macos",
   "cross-platform",
+  "asgi",
   "performance",
 ]
 classifiers = [
@@ -30,6 +35,7 @@ classifiers = [
   "Operating System :: MacOS :: MacOS X",
   "Operating System :: Microsoft :: Windows",
   "Operating System :: POSIX",
+  "Operating System :: Unix",
   "Programming Language :: Python :: 3 :: Only",
   "Programming Language :: Python :: 3.8",
   "Programming Language :: Python :: 3.9",
@@ -51,6 +57,7 @@ dependencies = [
 
 [project.urls]
 Homepage = "https://github.com/aviadr1/winuvloop"
+Documentation = "https://github.com/aviadr1/winuvloop#readme"
 Repository = "https://github.com/aviadr1/winuvloop.git"
 Issues = "https://github.com/aviadr1/winuvloop/issues"
 Changelog = "https://github.com/aviadr1/winuvloop/blob/main/CHANGELOG.md"
@@ -71,6 +78,14 @@ dev = [
 [tool.uv]
 package = true
 
+[tool.uv.build-backend]
+source-include = [
+  "CHANGELOG.md",
+  "CONTRIBUTING.md",
+  "SECURITY.md",
+  "tests/**",
+]
+
 [tool.ruff]
 line-length = 88
 target-version = "py38"
@@ -83,5 +98,5 @@ ignore = [
 ]
 
 [tool.pytest.ini_options]
-addopts = "-ra"
+addopts = "-ra --strict-config --strict-markers"
 testpaths = ["tests"]

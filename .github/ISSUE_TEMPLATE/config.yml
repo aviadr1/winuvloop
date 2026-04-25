@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: uvloop issues
+    url: https://github.com/MagicStack/uvloop/issues
+    about: Report Linux, macOS, or POSIX backend bugs that reproduce with uvloop directly.
+  - name: winloop issues
+    url: https://github.com/Vizonex/Winloop/issues
+    about: Report Windows backend bugs that reproduce with winloop directly.

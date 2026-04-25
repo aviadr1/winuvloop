@@ -17,6 +17,7 @@ class FakePolicy:
 
 def fake_backend(name: str) -> types.ModuleType:
     module = types.ModuleType(name)
+    module.__version__ = f"{name}-version"
     module.run = lambda main, **kwargs: ("run", name, main, kwargs)
     module.install = lambda: ("install", name)
     module.new_event_loop = lambda: FakeLoop()
@@ -69,6 +70,19 @@ def test_delegates_backend_specific_attributes(monkeypatch: pytest.MonkeyPatch) 
     assert winuvloop.backend_only == "delegated"
 
 
+def test_exposes_backend_version_for_support_logs(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    winuvloop = import_winuvloop(monkeypatch, "linux")
+
+    def missing_distribution(name: str) -> str:
+        raise winuvloop.metadata.PackageNotFoundError(name)
+
+    monkeypatch.setattr(winuvloop.metadata, "version", missing_distribution)
+
+    assert winuvloop.backend_version() == "uvloop-version"
+
+
 def test_missing_attributes_raise_clear_error(monkeypatch: pytest.MonkeyPatch) -> None:
     winuvloop = import_winuvloop(monkeypatch, "linux")
 
@@ -91,7 +105,25 @@ def test_missing_backend_error_names_selected_backend(
     monkeypatch.setattr(importlib, "import_module", import_module)
     monkeypatch.delitem(sys.modules, "winuvloop", raising=False)
 
-    with pytest.raises(ModuleNotFoundError, match="uvloop"):
+    with pytest.raises(ModuleNotFoundError, match="uvloop.*CPython"):
+        real_import_module("winuvloop")
+
+
+def test_nested_backend_import_errors_are_preserved(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    real_import_module = importlib.import_module
+
+    def import_module(name: str, package: str | None = None):
+        if name == "uvloop":
+            raise ModuleNotFoundError("No module named 'uvloop_dependency'", name="x")
+        return real_import_module(name, package)
+
+    monkeypatch.setattr(sys, "platform", "linux")
+    monkeypatch.setattr(importlib, "import_module", import_module)
+    monkeypatch.delitem(sys.modules, "winuvloop", raising=False)
+
+    with pytest.raises(ModuleNotFoundError, match="uvloop_dependency"):
         real_import_module("winuvloop")
 
 
@@ -99,6 +131,5 @@ def test_all_exports_are_names(monkeypatch: pytest.MonkeyPatch) -> None:
     winuvloop = import_winuvloop(monkeypatch, "linux")
 
     assert all(isinstance(name, str) for name in winuvloop.__all__)
-    assert {"run", "install", "new_event_loop", "backend_name"} <= set(
-        winuvloop.__all__
-    )
+    expected = {"run", "install", "new_event_loop", "backend_name", "backend_version"}
+    assert expected <= set(winuvloop.__all__)

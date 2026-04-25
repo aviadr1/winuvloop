@@ -5,6 +5,14 @@ All notable changes to `winuvloop` are documented here.
 ## 0.2.2 - Unreleased
 
 - Add public API stubs for better editor and type-checker ergonomics.
+- Add `backend_version()` for support logs and diagnostics.
+- Improve missing-backend import errors with Python implementation context.
+- Expand README guidance for `uvloop`, `winloop`, and `winuvloop` selection.
+- Gate automatic release tagging on successful `main` CI runs.
+- Add release smoke tests on Linux, macOS, and Windows before publishing.
+- Add formatting and bytecode compilation checks to CI.
+- Add upstream issue routing links and stronger pull request guidance.
+- Include tests and maintenance docs in the source distribution.
 
 ## 0.2.1 - 2026-04-25
 

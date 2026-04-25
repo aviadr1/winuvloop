@@ -20,6 +20,7 @@ def test_real_backend_matches_platform() -> None:
     assert winuvloop.backend_name() == expected
     assert winuvloop.__backend__ == expected
     assert winuvloop.backend().__name__ == expected
+    assert isinstance(winuvloop.backend_version(), str)
 
 
 def test_real_backend_runs_coroutine() -> None:
