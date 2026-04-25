@@ -15,11 +15,17 @@ updates:
           - "winloop"
       python-dev-tools:
         patterns:
-          - "build"
           - "pytest"
           - "ruff"
-          - "twine"
           - "uv-build"
+    ignore:
+      # Keep Python 3.8-compatible dev tool pins until runtime support drops 3.8.
+      - dependency-name: "build"
+        versions:
+          - ">=1.3"
+      - dependency-name: "twine"
+        versions:
+          - ">=6"
     commit-message:
       prefix: "deps"
       include: "scope"
