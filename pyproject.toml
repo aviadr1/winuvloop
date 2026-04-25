@@ -4,7 +4,7 @@ build-backend = "uv_build"
 
 [project]
 name = "winuvloop"
-version = "0.2.3"
+version = "0.2.4"
 description = "Use uvloop on Linux/macOS and winloop on Windows through one small asyncio compatibility import."
 readme = "README.md"
 requires-python = ">=3.8.1"
@@ -20,11 +20,16 @@ keywords = [
   "uvloop",
   "winloop",
   "asyncio-run",
+  "aiohttp",
+  "fastapi",
+  "uvicorn",
   "windows",
   "linux",
   "macos",
   "cross-platform",
   "asgi",
+  "websocket",
+  "http",
   "performance",
 ]
 classifiers = [

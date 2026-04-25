@@ -48,6 +48,21 @@ The wrapper stays deliberately small: platform detection, clear diagnostics,
 common API re-exports, typing stubs, and platform-specific dependency markers.
 Runtime behavior comes from the selected upstream backend.
 
+## Why Performance Can Matter
+
+The upstream projects publish benchmark guidance for the workloads they own.
+[`uvloop`](https://github.com/MagicStack/uvloop#performance) reports making
+asyncio 2-4x faster on its echo-server benchmarks. On Windows,
+[`winloop`](https://github.com/Vizonex/Winloop#benchmarks) reports a TCP
+connection benchmark of 0.493s with `WinLoopPolicy`, compared with 2.510s for
+`WindowsProactorEventLoopPolicy` and 2.723s for
+`WindowsSelectorEventLoopPolicy`.
+
+Those are upstream benchmark numbers, not a universal promise for every
+application. The practical point for `winuvloop` is simpler: one dependency
+lets a cross-platform project select the optimized backend that upstream
+projects already benchmark and maintain for each operating system family.
+
 ## When To Use It
 
 Use `winuvloop` when:
@@ -142,6 +157,120 @@ The module re-exports the common backend API:
 - `backend_version`
 
 Backend-specific attributes are delegated to the selected upstream module.
+
+## Framework Examples
+
+`winuvloop` is most useful at process entry points: command-line scripts,
+application launchers, benchmark runners, and local development helpers. Install
+the optimized loop before a framework creates its event loop, or use
+`winuvloop.run()` when you own the top-level coroutine.
+
+These examples do not mean `winuvloop` depends on the frameworks shown here.
+Install FastAPI, Uvicorn, aiohttp, or any other framework separately in your
+application.
+
+### FastAPI And Uvicorn
+
+For a FastAPI application launched from Python, install the selected backend
+before calling `uvicorn.run()`. Pass `loop="asyncio"` so Uvicorn uses the event
+loop policy that `winuvloop.install()` already selected:
+
+```python
+# serve.py
+import uvicorn
+
+import winuvloop
+
+
+winuvloop.install()
+
+uvicorn.run(
+    "myapp:app",
+    host="127.0.0.1",
+    port=8000,
+    loop="asyncio",
+)
+```
+
+Then run the launcher instead of invoking `uvicorn` directly:
+
+```bash
+python serve.py
+```
+
+If your deployment platform already configures the event loop, prefer the
+platform's documented setting. `winuvloop` is the portable option when you want
+the same launcher to select `uvloop` on Linux/macOS and `winloop` on Windows.
+
+### aiohttp Web Server
+
+For an `aiohttp.web` application, use `winuvloop.run()` around the application
+runner:
+
+```python
+import asyncio
+
+from aiohttp import web
+
+import winuvloop
+
+
+async def hello(request: web.Request) -> web.Response:
+    return web.Response(text="hello")
+
+
+async def main() -> None:
+    app = web.Application()
+    app.router.add_get("/", hello)
+
+    runner = web.AppRunner(app)
+    await runner.setup()
+
+    site = web.TCPSite(runner, "127.0.0.1", 8080)
+    await site.start()
+
+    await asyncio.Event().wait()
+
+
+winuvloop.run(main())
+```
+
+### Async CLI Or Worker
+
+For scripts, CLIs, and workers, keep the entry point boring:
+
+```python
+import winuvloop
+
+
+async def main() -> int:
+    ...
+    return 0
+
+
+raise SystemExit(winuvloop.run(main()))
+```
+
+This keeps examples and internal tools platform-neutral while still selecting
+the optimized backend for the current runner.
+
+### Tests And Support Logs
+
+For compatibility tests, assert the selected backend rather than hard-coding an
+operating system in every test:
+
+```python
+import sys
+
+import winuvloop
+
+
+def test_optimized_backend_is_available() -> None:
+    expected = "winloop" if sys.platform == "win32" else "uvloop"
+
+    assert winuvloop.backend_name() == expected
+    assert winuvloop.backend_version() is not None
+```
 
 For issue reports, include this diagnostic snippet:
 
