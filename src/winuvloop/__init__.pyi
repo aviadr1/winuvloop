@@ -1,0 +1,48 @@
+from __future__ import annotations
+
+import asyncio
+from types import ModuleType
+from typing import Any, Callable, Coroutine, TypeVar
+
+_T = TypeVar("_T")
+
+__backend__: str
+__version__: str
+
+
+class Loop(asyncio.AbstractEventLoop):
+    ...
+
+
+class EventLoopPolicy(asyncio.AbstractEventLoopPolicy):
+    ...
+
+
+def backend_name() -> str:
+    ...
+
+
+def backend() -> ModuleType:
+    ...
+
+
+def new_event_loop() -> Loop:
+    ...
+
+
+def install() -> None:
+    ...
+
+
+def run(
+    main: Coroutine[Any, Any, _T],
+    *,
+    loop_factory: Callable[[], Loop] | None = ...,
+    debug: bool | None = ...,
+    **run_kwargs: Any,
+) -> _T:
+    ...
+
+
+def __getattr__(name: str) -> Any:
+    ...
