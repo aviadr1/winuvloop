@@ -1,0 +1,56 @@
+name: Dependabot Auto-Merge
+
+on:
+  workflow_run:
+    workflows: ["CI"]
+    types: [completed]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  automerge:
+    name: Auto-merge Dependabot PR
+    if: github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Merge Dependabot pull requests after CI passes
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_PULL_REQUESTS: ${{ toJson(github.event.workflow_run.pull_requests) }}
+        run: |
+          PR_NUMBERS="$(python - <<'PY'
+          import json
+          import os
+
+          pull_requests = json.loads(os.environ["RUN_PULL_REQUESTS"])
+          numbers = [str(pr["number"]) for pr in pull_requests]
+          print(" ".join(numbers))
+          PY
+          )"
+
+          if [ -z "${PR_NUMBERS}" ]; then
+            echo "No pull requests are associated with this CI run."
+            exit 0
+          fi
+
+          for number in ${PR_NUMBERS}; do
+            author="$(gh pr view "${number}" --json author --jq '.author.login')"
+            state="$(gh pr view "${number}" --json state --jq '.state')"
+            draft="$(gh pr view "${number}" --json isDraft --jq '.isDraft')"
+
+            if [ "${author}" != "app/dependabot" ] && [ "${author}" != "dependabot[bot]" ]; then
+              echo "Skipping #${number}: author is ${author}."
+              continue
+            fi
+
+            if [ "${state}" != "OPEN" ] || [ "${draft}" != "false" ]; then
+              echo "Skipping #${number}: state=${state}, draft=${draft}."
+              continue
+            fi
+
+            gh pr merge "${number}" --squash --delete-branch \
+              --subject "$(gh pr view "${number}" --json title --jq '.title')" \
+              --body "Automatically merged after CI passed."
+          done

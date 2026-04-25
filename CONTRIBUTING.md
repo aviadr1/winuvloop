@@ -29,6 +29,11 @@ uv run twine check dist/*
 - Minor releases add public API or support for new Python/backend versions.
 - Major releases remove compatibility or change public behavior.
 
+Releases are automatic after a version change lands on `main`. If
+`pyproject.toml` contains a version without a matching `vX.Y.Z` tag, GitHub
+Actions creates the tag and dispatches `release.yml`. The release workflow
+builds, validates, publishes to PyPI, and creates a GitHub Release.
+
 ## Dependency Policy
 
 Runtime dependencies should stay aligned with supported `uvloop` and `winloop`
@@ -36,6 +41,7 @@ releases. Avoid upper bounds unless a known incompatibility exists; upper bounds
 can block users from receiving fixed wheels and security releases.
 
 Development dependencies are locked with `uv.lock` and updated by Dependabot.
+Dependabot pull requests are merged automatically after CI passes.
 
 ## Pull Request Guidelines
 
