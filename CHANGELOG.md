@@ -2,9 +2,8 @@
 
 All notable changes to `winuvloop` are documented here.
 
-## 0.2.2 - Unreleased
+## 0.2.3 - 2026-04-25
 
-- Add public API stubs for better editor and type-checker ergonomics.
 - Add `backend_version()` for support logs and diagnostics.
 - Improve missing-backend import errors with Python implementation context.
 - Expand README guidance for `uvloop`, `winloop`, and `winuvloop` selection.
@@ -15,6 +14,10 @@ All notable changes to `winuvloop` are documented here.
 - Include tests and maintenance docs in the source distribution.
 - Keep Python 3.9 development installs on the compatible Twine line so
   Dependabot security updates can resolve.
+
+## 0.2.2 - 2026-04-25
+
+- Add public API stubs for better editor and type-checker ergonomics.
 
 ## 0.2.1 - 2026-04-25
 
