@@ -1,0 +1,106 @@
+name: Auto Release
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  actions: write
+  contents: write
+
+concurrency:
+  group: auto-release
+  cancel-in-progress: false
+
+jobs:
+  tag:
+    name: Tag new project version
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Read project version
+        id: version
+        run: |
+          python - <<'PY' >> "$GITHUB_OUTPUT"
+          import re
+          import tomllib
+
+          with open("pyproject.toml", "rb") as file:
+              version = tomllib.load(file)["project"]["version"]
+
+          if not re.fullmatch(r"\d+\.\d+\.\d+(?:[a-zA-Z0-9.+-]+)?", version):
+              raise SystemExit(f"Unsupported release version: {version}")
+
+          print(f"version={version}")
+          print(f"tag=v{version}")
+          PY
+
+      - name: Check whether tag already exists
+        id: tag
+        env:
+          TAG: ${{ steps.version.outputs.tag }}
+        run: |
+          if git rev-parse -q --verify "refs/tags/${TAG}" >/dev/null; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          if git ls-remote --exit-code --tags origin "refs/tags/${TAG}" >/dev/null 2>&1; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          echo "exists=false" >> "$GITHUB_OUTPUT"
+
+      - name: Ensure version moves forward
+        if: steps.tag.outputs.exists == 'false'
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          latest_tag="$(git tag -l 'v[0-9]*' --sort=-v:refname | head -n 1)"
+
+          if [ -z "${latest_tag}" ]; then
+            exit 0
+          fi
+
+          LATEST_TAG="${latest_tag}" python - <<'PY'
+          import os
+          import re
+
+          def parse(version: str) -> tuple[int, int, int]:
+              match = re.fullmatch(r"v?(\d+)\.(\d+)\.(\d+)(?:[a-zA-Z0-9.+-]+)?", version)
+              if not match:
+                  raise SystemExit(f"Unsupported version tag: {version}")
+              return tuple(int(part) for part in match.groups())
+
+          current = parse(os.environ["VERSION"])
+          latest = parse(os.environ["LATEST_TAG"])
+
+          if current <= latest:
+              raise SystemExit(
+                  f"Refusing to tag v{os.environ['VERSION']}: latest tag is "
+                  f"{os.environ['LATEST_TAG']}"
+              )
+          PY
+
+      - name: Create and push release tag
+        if: steps.tag.outputs.exists == 'false'
+        env:
+          TAG: ${{ steps.version.outputs.tag }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git tag -a "${TAG}" -m "Release ${TAG}"
+          git push origin "${TAG}"
+
+      - name: Dispatch release workflow
+        if: steps.tag.outputs.exists == 'false'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.version.outputs.tag }}
+        run: gh workflow run release.yml --ref "${TAG}"

@@ -13,10 +13,14 @@ All notable changes to `winuvloop` are documented here.
 - Add `backend_name()`, `backend()`, and `__backend__` for support visibility.
 - Add a typed package marker.
 - Add pytest coverage for platform selection, exports, and backend delegation.
+- Add real backend smoke tests for CI compatibility coverage.
 - Add ruff linting.
 - Replace the release workflow with a tag-based trusted publishing flow.
+- Add automatic release tagging from `pyproject.toml` versions on `main`.
+- Add GitHub Release creation with release artifacts.
 - Add a CI workflow for lockfile checks, linting, tests, build validation, and
   package metadata checks.
+- Add Dependabot auto-merge after CI passes.
 - Update Dependabot to track `uv` dependencies and GitHub Actions.
 
 ## 0.2.0
