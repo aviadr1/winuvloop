@@ -1,21 +1,87 @@
 [build-system]
-requires = ["setuptools", "wheel"]
-build-backend = "setuptools.build_meta"
+requires = ["uv_build>=0.11.7,<0.12.0"]
+build-backend = "uv_build"
 
-[tool.poetry]
+[project]
 name = "winuvloop"
-version = "0.2.0"
-description = "winuvloop is a Python package that automatically installs and configures the optimal event loop for your platform, setting up uvloop on Linux/POSIX systems and winloop on Windows, ensuring seamless cross-platform development."
-authors = ["Aviad Rozenhek <aviadr1@gmail.com>"]
-license = "MIT"
+version = "0.2.1"
+description = "Cross-platform asyncio event loop selection: uvloop on POSIX and winloop on Windows."
 readme = "README.md"
+requires-python = ">=3.8.1"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [
+  { name = "Aviad Rozenhek", email = "aviadr1@gmail.com" },
+]
+keywords = [
+  "asyncio",
+  "event-loop",
+  "uvloop",
+  "winloop",
+  "windows",
+  "cross-platform",
+  "performance",
+]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Framework :: AsyncIO",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: MacOS :: MacOS X",
+  "Operating System :: Microsoft :: Windows",
+  "Operating System :: POSIX",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
+  "Programming Language :: Python :: Implementation :: CPython",
+  "Typing :: Typed",
+  "Topic :: Internet",
+  "Topic :: Software Development :: Libraries :: Python Modules",
+  "Topic :: System :: Networking",
+]
+dependencies = [
+  "uvloop>=0.22.1; sys_platform != 'win32' and platform_python_implementation == 'CPython'",
+  "winloop>=0.6.2; sys_platform == 'win32' and platform_python_implementation == 'CPython'",
+]
 
-[tool.poetry.dependencies]
-python = "^3.11"
-uvloop = {version = "*", markers = "sys_platform != 'win32'"}
-winloop = {version = "*", markers = "sys_platform == 'win32'"}
+[project.urls]
+Homepage = "https://github.com/aviadr1/winuvloop"
+Repository = "https://github.com/aviadr1/winuvloop.git"
+Issues = "https://github.com/aviadr1/winuvloop/issues"
+Changelog = "https://github.com/aviadr1/winuvloop/blob/main/CHANGELOG.md"
+"Source: uvloop" = "https://github.com/MagicStack/uvloop"
+"Source: winloop" = "https://github.com/Vizonex/Winloop"
 
-[tool.poetry.group.dev.dependencies]
-build = "^1.2.1"
-twine = "^5.1.1"
-bump2version = "^1.0.1"
+[dependency-groups]
+dev = [
+  "build>=1.2.2,<1.3; python_version < '3.9'",
+  "build>=1.4.4; python_version >= '3.9'",
+  "pytest>=8.3.5,<9; python_version < '3.10'",
+  "pytest>=9.0.3; python_version >= '3.10'",
+  "ruff>=0.15.12",
+  "twine>=5.1.1,<6; python_version < '3.9'",
+  "twine>=6.2.0; python_version >= '3.9'",
+]
+
+[tool.uv]
+package = true
+
+[tool.ruff]
+line-length = 88
+target-version = "py38"
+
+[tool.ruff.lint]
+select = ["B", "E", "F", "I", "UP", "W"]
+ignore = [
+  "UP006",
+  "UP007",
+]
+
+[tool.pytest.ini_options]
+addopts = "-ra"
+testpaths = ["tests"]
