@@ -18,6 +18,7 @@ jobs:
       - name: Merge Dependabot pull requests after CI passes
         env:
           GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
           RUN_PULL_REQUESTS: ${{ toJson(github.event.workflow_run.pull_requests) }}
         run: |
           PR_NUMBERS="$(python - <<'PY'
