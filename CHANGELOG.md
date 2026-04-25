@@ -2,6 +2,13 @@
 
 All notable changes to `winuvloop` are documented here.
 
+## 0.2.4 - 2026-04-25
+
+- Add FastAPI/Uvicorn, aiohttp, async CLI, and compatibility-test examples to
+  the README.
+- Add upstream uvloop and winloop benchmark references to the README.
+- Add framework and protocol keywords to improve PyPI discoverability.
+
 ## 0.2.3 - 2026-04-25
 
 - Add `backend_version()` for support logs and diagnostics.
