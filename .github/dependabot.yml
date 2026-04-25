@@ -1,19 +1,47 @@
 version: 2
 updates:
-  # Poetry Dependencies
-  - package-ecosystem: "pip"
+  - package-ecosystem: "uv"
     directory: "/"
     schedule:
-      interval: "daily"
-    open-pull-requests-limit: 5
-    # Allows updating Poetry-managed dependencies listed in pyproject.toml
-    ignore:
-      - dependency-name: "uvloop"
-      - dependency-name: "winloop"
+      interval: "weekly"
+      day: "monday"
+      time: "08:00"
+      timezone: "Asia/Jerusalem"
+    open-pull-requests-limit: 10
+    groups:
+      upstream-event-loops:
+        patterns:
+          - "uvloop"
+          - "winloop"
+      python-dev-tools:
+        patterns:
+          - "build"
+          - "pytest"
+          - "ruff"
+          - "twine"
+          - "uv-build"
+    commit-message:
+      prefix: "deps"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "python"
 
-  # GitHub Actions Dependencies
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "weekly"
+      day: "monday"
+      time: "08:30"
+      timezone: "Asia/Jerusalem"
     open-pull-requests-limit: 5
+    groups:
+      github-actions:
+        patterns:
+          - "*"
+    commit-message:
+      prefix: "ci"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "github-actions"
