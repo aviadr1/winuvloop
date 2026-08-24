@@ -51,23 +51,26 @@ except metadata.PackageNotFoundError:  # pragma: no cover - editable tree fallba
     __version__ = "0.0.0"
 
 run = _BACKEND.run
-install = _BACKEND.install
 new_event_loop = _BACKEND.new_event_loop
 Loop = _BACKEND.Loop
-EventLoopPolicy = _BACKEND.EventLoopPolicy
 
 __all__ = (
-    "EventLoopPolicy",
     "Loop",
     "__backend__",
     "__version__",
     "backend",
     "backend_name",
     "backend_version",
-    "install",
     "new_event_loop",
     "run",
 )
+
+_DEPRECATED_EXPORTS = ("install", "EventLoopPolicy")
+
+# Keep the compatibility surface aligned with uvloop and winloop: policy APIs
+# remain public through Python 3.15 and disappear with asyncio policies in 3.16.
+if sys.version_info[:2] < (3, 16):
+    __all__ += _DEPRECATED_EXPORTS
 
 
 def __getattr__(name: str) -> Any:
