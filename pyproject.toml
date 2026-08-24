@@ -4,7 +4,7 @@ build-backend = "uv_build"
 
 [project]
 name = "winuvloop"
-version = "0.2.4"
+version = "0.2.5"
 description = "Use uvloop on Linux/macOS and winloop on Windows through one small asyncio compatibility import."
 readme = "README.md"
 requires-python = ">=3.8.1"
