@@ -1,8 +1,10 @@
 from __future__ import annotations
 
 import importlib
+import subprocess
 import sys
-import warnings
+
+import pytest
 
 
 def import_real_winuvloop():
@@ -25,9 +27,31 @@ def test_real_backend_matches_platform() -> None:
 
 
 def test_import_is_clean_under_deprecation_warnings_as_errors() -> None:
-    with warnings.catch_warnings():
-        warnings.simplefilter("error", DeprecationWarning)
-        import_real_winuvloop()
+    subprocess.run(
+        [sys.executable, "-W", "error::DeprecationWarning", "-c", "import winuvloop"],
+        check=True,
+    )
+
+
+@pytest.mark.parametrize(
+    ("version_info", "expected_deprecated_exports"),
+    [
+        ((3, 15), {"EventLoopPolicy", "install"}),
+        ((3, 16), set()),
+    ],
+)
+def test_deprecated_exports_follow_python_lifecycle(
+    version_info: tuple[int, int],
+    expected_deprecated_exports: set[str],
+) -> None:
+    code = f"""
+import sys
+sys.version_info = {version_info!r}
+import winuvloop
+deprecated_exports = {{"EventLoopPolicy", "install"}}
+assert deprecated_exports & set(winuvloop.__all__) == {expected_deprecated_exports!r}
+"""
+    subprocess.run([sys.executable, "-c", code], check=True)
 
 
 def test_real_backend_runs_coroutine() -> None:
