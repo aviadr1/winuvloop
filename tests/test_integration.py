@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import importlib
 import sys
+import warnings
 
 
 def import_real_winuvloop():
@@ -21,6 +22,12 @@ def test_real_backend_matches_platform() -> None:
     assert winuvloop.__backend__ == expected
     assert winuvloop.backend().__name__ == expected
     assert isinstance(winuvloop.backend_version(), str)
+
+
+def test_import_is_clean_under_deprecation_warnings_as_errors() -> None:
+    with warnings.catch_warnings():
+        warnings.simplefilter("error", DeprecationWarning)
+        import_real_winuvloop()
 
 
 def test_real_backend_runs_coroutine() -> None:

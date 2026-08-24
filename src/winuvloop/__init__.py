@@ -51,10 +51,8 @@ except metadata.PackageNotFoundError:  # pragma: no cover - editable tree fallba
     __version__ = "0.0.0"
 
 run = _BACKEND.run
-install = _BACKEND.install
 new_event_loop = _BACKEND.new_event_loop
 Loop = _BACKEND.Loop
-EventLoopPolicy = _BACKEND.EventLoopPolicy
 
 __all__ = (
     "EventLoopPolicy",
