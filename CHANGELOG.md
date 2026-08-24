@@ -2,7 +2,7 @@
 
 All notable changes to `winuvloop` are documented here.
 
-## Unreleased
+## 0.2.5 - 2026-08-25
 
 - Avoid loading deprecated event-loop policy compatibility APIs during import
   on Python 3.14, and stop exporting them when Python removes policies in 3.16.

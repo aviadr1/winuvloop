@@ -1302,7 +1302,7 @@ wheels = [
 
 [[package]]
 name = "winuvloop"
-version = "0.2.4"
+version = "0.2.5"
 source = { editable = "." }
 dependencies = [
     { name = "uvloop", marker = "platform_python_implementation == 'CPython' and sys_platform != 'win32'" },
